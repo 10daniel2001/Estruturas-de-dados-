@@ -68,3 +68,134 @@ manipulação de índices
 lógica circular
 
 estruturação de dados em C
+
+-------------------------------------------------------------------------------------------------
+Implementação de Pilha em C (LIFO)
+
+Este projeto apresenta a implementação de uma Pilha estática utilizando vetores em linguagem C.
+A Pilha segue o princípio LIFO (Last In, First Out), onde o último elemento inserido é o primeiro a ser removido.
+
+A estrutura foi construída para armazenar elementos do tipo Pessoa, contendo um nome e uma idade.
+
+📌 Conceitos da Pilha
+
+Uma Pilha (Stack) possui as seguintes operações clássicas:
+
+PUSH — Inserir um elemento no topo
+
+POP — Remover o elemento do topo
+
+PEEK — Consultar o topo sem remover
+
+EMPTY — Verificar se está vazia
+
+FULL — Verificar se está cheia
+
+As pilhas são amplamente usadas em:
+
+Chamadas de funções (call stack)
+
+Desfazer ações (Ctrl+Z)
+
+Interpretação de expressões matemáticas
+
+Navegação entre páginas (histórico do navegador)
+
+📁 Estruturas Utilizadas
+Estrutura Pessoa
+typedef struct {
+    char nome[49];
+    int idade;
+} Pessoa;
+
+Estrutura Pilha
+typedef struct {
+    Pessoa itens[max];
+    int topo;
+} Pilha;
+
+⚙️ Funções Implementadas
+inicializarpilha()
+
+Define o topo como -1, indicando pilha vazia.
+
+void inicializarpilha(Pilha *p);
+
+pilha_vazia()
+
+Retorna 1 se o topo for igual a -1.
+
+int pilha_vazia(Pilha *p);
+
+pilha_cheia()
+
+Retorna 1 se o topo estiver no último índice do vetor.
+
+int pilha_cheia(Pilha *p);
+
+push()
+
+Insere um elemento no topo da pilha.
+
+void push(Pilha *p, Pessoa n);
+
+pop()
+
+Remove o elemento do topo e o envia para a variável indicada.
+
+void pop(Pilha *p, Pessoa *r);
+
+peek()
+
+Consulta o elemento do topo sem removê-lo.
+
+void peek(Pilha *p, Pessoa *v);
+
+Mostrar()
+
+Exibe a pilha do topo até a base.
+
+void Mostrar(Pilha *p);
+
+▶️ Exemplo de Execução
+Pilha - Topo -> Base
+E -- 4
+D -- 3
+C -- 2
+B -- 1
+A -- 0
+
+Removida E - 4
+
+Pilha - Topo -> Base
+D -- 3
+C -- 2
+B -- 1
+A -- 0
+
+Visualizar topo atual -> D - 3
+
+🧾 Arquivo Principal
+
+O main() demonstra o uso completo da pilha: inicialização, inserção, remoção e visualização.
+
+🛠️ Compilar e Executar
+
+No Linux:
+
+gcc pilha.c -o pilha
+./pilha
+
+
+No Windows (MinGW):
+
+gcc pilha.c -o pilha.exe
+pilha.exe
+
+📚 Observações
+
+A pilha tem tamanho fixo definido por #define max 5.
+
+Todas as operações são O(1).
+
+Ideal para estudo de estruturas de dados e lógica de pilha.
