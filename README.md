@@ -199,3 +199,70 @@ A pilha tem tamanho fixo definido por #define max 5.
 Todas as operações são O(1).
 
 Ideal para estudo de estruturas de dados e lógica de pilha.
+
+
+# Selection Sort em C
+
+Este projeto demonstra a implementação do algoritmo **Selection Sort** na linguagem C, com foco em aprendizado para iniciantes.
+
+---
+
+## O que é Selection Sort?
+
+Selection Sort é um algoritmo de ordenação simples que funciona da seguinte forma:
+
+1. Procura o menor elemento do vetor.
+2. Coloca esse elemento na primeira posição.
+3. Repete o processo para o restante do vetor.
+4. Continua até o vetor ficar totalmente ordenado.
+
+---
+
+## Como o algoritmo funciona
+
+Dado o vetor:
+
+---
+
+## Estrutura do código
+
+### Função `trocar`
+Responsável por trocar dois valores de posição usando ponteiros.
+
+### Função `selectionSort`
+Implementa o algoritmo Selection Sort:
+- Usa dois laços `for`
+- Procura o menor valor
+- Faz apenas uma troca por iteração
+
+### Função `main`
+- Cria o vetor
+- Chama a função de ordenação
+- Mostra o vetor ordenado na tela
+
+---
+
+## Complexidade
+
+- Tempo: **O(n²)**
+- Espaço: **O(1)**
+
+Isso significa que o algoritmo é simples, porém lento para vetores grandes.
+
+---
+
+## Quando usar
+
+- Para estudar lógica de programação
+- Para aprender algoritmos de ordenação
+- Para vetores pequenos
+
+---
+
+## Como compilar e executar
+
+No terminal Linux:
+
+```bash
+gcc selection_sort.c -o selection_sort
+./selection_sort
