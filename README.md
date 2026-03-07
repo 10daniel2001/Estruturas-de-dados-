@@ -334,3 +334,30 @@ gcc tabela_hash.c -o tabela_hash
 * Praticar lógica de programação em C
 * Criar base sólida para estruturas mais avançadas
 * Facilitar revisões e refatorações futuras
+
+
+========================================================================================
+
+# C Threads + Mutex Example
+
+Exemplo simples de concorrência em C usando POSIX threads.
+
+## Conceitos demonstrados
+
+- Threads
+- Seção crítica
+- Race condition
+- Mutex (mutual exclusion)
+
+## Como compilar
+
+gcc main.c -o programa -pthread
+
+## Como executar
+
+./programa
+
+## Explicação
+
+Duas threads incrementam uma variável compartilhada (contador).
+O mutex garante que apenas uma thread acesse o contador por vez.
