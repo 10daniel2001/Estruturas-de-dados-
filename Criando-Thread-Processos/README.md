@@ -1,180 +1,106 @@
-# Execução de Programas com `fork()` e `execve()` em C
+# ⚙️ Processos e Threads em C
 
-## Descrição
+Repositório dedicado ao estudo de concorrência e comunicação com o sistema operacional em C. Aqui exploro como o SO gerencia processos e como múltiplas threads compartilham recursos de forma segura.
 
-Este programa em C demonstra como criar processos filhos no Linux utilizando `fork()` e executar programas externos usando `execve()`.
+> *“Para entender sistemas operacionais de verdade, você precisa sujar as mãos com fork, exec e mutex.”*
 
-O processo principal cria **três processos filhos**, e cada filho executa um programa diferente do sistema:
+-----
 
-* `xcalc`
-* `brave`
-* `gedit`
+## 🗂️ Projetos
 
-O processo pai aguarda a finalização de cada filho usando `waitpid()` antes de continuar a execução.
+### 🔀 Processos (`Processos.c`)
 
----
+Demonstração de criação de processos filhos usando `fork()` e substituição de imagem com `execve()`.
 
-## Conceitos Utilizados
+**O que faz:**
 
-### `fork()`
+- Cria 3 processos filhos sequencialmente com `fork()`
+- Cada filho executa um programa diferente do sistema via `execve()`
+- O processo pai aguarda cada filho terminar com `waitpid()`
 
-Cria um novo processo (processo filho).
+**Conceitos praticados:**
 
-Retorno da função:
+- `fork()` — duplica o processo atual em pai e filho
+- `execve()` — substitui a imagem do processo filho por outro programa
+- `waitpid()` — processo pai espera o filho terminar (evita processos zumbi)
+- Passagem de `envp[]` — variáveis de ambiente do sistema
 
-| Valor retornado | Significado                            |
-| --------------- | -------------------------------------- |
-| `0`             | Estamos no processo filho              |
-| `>0`            | Estamos no processo pai (PID do filho) |
-| `<0`            | Erro ao criar processo                 |
-
----
-
-### `execve()`
-
-Substitui o processo atual por outro programa.
-
-Estrutura:
-
-```
-execve(caminho_do_programa, argumentos, ambiente)
+```bash
+gcc Processos.c -o processos
+./processos
 ```
 
-Exemplo:
+-----
 
-```
-char *args[] = {"gedit", NULL};
-execve("/usr/bin/gedit", args, envp);
-```
+### 🔒 Threads com Mutex (`Threads-mutex.c`)
 
-Se `execve()` for executado com sucesso, **o código após ele não é executado**, pois o processo passa a ser o novo programa.
+Demonstração do problema de race condition e como resolvê-lo com mutex.
 
----
+**O que faz:**
 
-### `waitpid()`
+- Cria 2 threads que incrementam um contador compartilhado 100x cada
+- Usa `pthread_mutex_lock` e `pthread_mutex_unlock` para proteger o acesso
+- Resultado sempre correto: **200** — graças ao mutex
 
-Permite que o processo pai espere o término de um processo filho.
+**Por que mutex importa:**
+Sem o mutex, as duas threads acessariam `contador++` ao mesmo tempo. Como essa operação não é atômica (é leitura + soma + escrita), o resultado seria imprevisível — às vezes 180, às vezes 195, raramente 200. O mutex garante que apenas uma thread por vez modifica o contador.
 
-```
-waitpid(pid, NULL, 0);
-```
+**Conceitos praticados:**
 
-Isso evita que vários processos rodem ao mesmo tempo sem controle.
+- `pthread_create()` — cria uma thread
+- `pthread_join()` — aguarda a thread terminar
+- `pthread_mutex_init/lock/unlock` — controle de acesso a recursos compartilhados
+- Race condition e como evitá-la
 
----
-
-## Fluxo de Execução
-
-```
-Programa inicia
-      │
-      ├─ fork() → filho 1 executa xcalc
-      │
-      ├─ fork() → filho 2 executa brave
-      │
-      └─ fork() → filho 3 executa gedit
+```bash
+gcc Threads-mutex.c -o threads -lpthread
+./threads
+# Saída esperada: Valor final do contador: 200
 ```
 
-Cada processo filho executa um programa diferente.
+-----
 
----
+## 🧠 Por que isso é importante
 
-## Código
+Processos e threads são a base de qualquer sistema operacional. Entender como o kernel cria e gerencia processos, e como threads competem por recursos, é essencial para:
 
-```c
-#include <stdio.h>
-#include <sys/wait.h>
-#include <unistd.h>
+- Desenvolver sistemas embarcados e de tempo real
+- Entender como servidores web atendem múltiplas requisições
+- Escrever código seguro em ambientes concorrentes
+- Contribuir com o kernel Linux ou sistemas similares
 
-int main(int argc, char **argv, char *envp[]) {
+-----
 
-    int i, pid;
+## 📖 O que aprendi
 
-    for (i = 1; i <= 3; i++) {
+- Como o `fork()` realmente funciona na memória — pai e filho têm espaços separados
+- Por que `execve()` substitui a imagem do processo em vez de criar um novo
+- O que é uma race condition e por que é difícil de debugar
+- Como mutex resolve o problema de acesso concorrente
+- A diferença prática entre processos (memória separada) e threads (memória compartilhada)
 
-        pid = fork();
+-----
 
-        if (pid == 0) {
+## 🚀 Próximos passos
 
-            if (i == 1) {
-                char *args[] = {"xcalc", NULL};
-                execve("/usr/bin/xcalc", args, envp);
-            }
+- [ ] Implementar comunicação entre processos com `pipe()`
+- [ ] Explorar semáforos como alternativa ao mutex
+- [ ] Implementar um pool de threads simples
+- [ ] Estudar deadlock e como evitá-lo
+- [ ] Explorar o mesmo conceito em Rust com `std::thread` e `Arc<Mutex<>>`
 
-            if (i == 2) {
-                char *args[] = {"brave", NULL};
-                execve("/usr/bin/brave", args, envp);
-            }
+-----
 
-            if (i == 3) {
-                char *args[] = {"gedit", NULL};
-                execve("/usr/bin/gedit", args, envp);
-            }
+## 🔗 Outros repositórios
 
-            perror("Erro no execve");
-            return 1;
-        }
-        else {
-            waitpid(pid, NULL, 0);
-        }
-    }
+- [Estruturas-de-dados em C](https://github.com/10daniel2001/Estruturas-de-dados-) — Base de dados e memória em C
+- [Meu-Rust-start](https://github.com/10daniel2001/Meu-Rust-start) — Próximo passo: concorrência segura em Rust
 
-    return 0;
-}
-```
+-----
 
----
+## 👤 Autor
 
-## Compilação
+**Daniel** — Estudante de Engenharia de Software (3º semestre)  
+Foco em sistemas de baixo nível, SO e concorrência.
 
-```
-gcc programa.c -o programa
-```
-
----
-
-## Execução
-
-```
-./programa
-```
-
----
-
-## Observação
-
-Os caminhos dos programas podem variar dependendo da distribuição Linux. Para verificar:
-
-```
-which xcalc
-which brave
-which gedit
-```
-
-Use o caminho retornado no `execve()`.
-
-========================================================================================
-
-# C Threads + Mutex Example
-
-Exemplo simples de concorrência em C usando POSIX threads.
-
-## Conceitos demonstrados
-
-- Threads
-- Seção crítica
-- Race condition
-- Mutex (mutual exclusion)
-
-## Como compilar
-
-gcc main.c -o programa -pthread
-
-## Como executar
-
-./programa
-
-## Explicação
-
-Duas threads incrementam uma variável compartilhada (contador).
-O mutex garante que apenas uma thread acesse o contador por vez.
+[![GitHub](https://img.shields.io/badge/GitHub-10daniel2001-black?logo=github)](https://github.com/10daniel2001)
