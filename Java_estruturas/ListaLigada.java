@@ -7,3 +7,22 @@ class No {
         this.proximo = null;
     }
 }
+
+      public class ListaLi {
+        private No head;
+
+         
+             public void inserir(int valor){
+                No novo = new No(valor);
+
+                if (head == null){
+                    head = novo;
+                    return;
+                }
+
+                No atual = head;
+
+             
+
+             }
+      }
